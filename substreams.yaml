@@ -1,0 +1,58 @@
+specVersion: v0.1.0
+package:
+  name: liquity
+  version: v0.1.0
+
+imports:
+  sql: https://github.com/streamingfast/substreams-sink-sql/releases/download/protodefs-v1.0.7/substreams-sink-sql-protodefs-v1.0.7.spkg
+  graph: https://github.com/streamingfast/substreams-sink-subgraph/releases/download/v0.1.0/substreams-sink-subgraph-protodefs-v0.1.0.spkg
+  database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v1.2.1/substreams-database-change-v1.2.1.spkg
+  entity: https://github.com/streamingfast/substreams-entity-change/releases/download/v1.1.0/substreams-entity-change-v1.1.0.spkg
+
+protobuf:
+  files:
+    - contract.proto
+  importPaths:
+    - ./proto
+
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/substreams.wasm
+
+modules:
+  - name: map_events
+    kind: map
+    initialBlock: 12178562
+    inputs:
+      - source: sf.ethereum.type.v2.Block
+    output:
+      type: proto:contract.v1.Events
+
+  - name: eth_sent_store
+    kind: store
+    initialBlock: 12178562
+    updatePolicy: add
+    valueType: bigint
+    inputs:
+      - map: map_events
+
+  # - name: db_out
+  #   kind: map
+  #   initialBlock: 12178562
+  #   inputs:
+  #     - map: map_events
+  #   output:
+  #     type: proto:sf.substreams.sink.database.v1.DatabaseChanges
+
+  - name: graph_out
+    kind: map
+    initialBlock: 12178562
+    inputs:
+      - map: map_events
+      - source: sf.substreams.v1.Clock
+      - store: eth_sent_store
+    output:
+      type: proto:sf.substreams.entity.v1.EntityChanges
+
+network: mainnet

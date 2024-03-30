@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package contract.v1;
+
+message Events {
+    repeated activepool_ActivePoolAddressChanged activepool_active_pool_address_changeds = 1;
+    repeated activepool_ActivePoolEthBalanceUpdated activepool_active_pool_eth_balance_updateds = 2;
+    repeated activepool_ActivePoolLusdDebtUpdated activepool_active_pool_lusd_debt_updateds = 3;
+    repeated activepool_BorrowerOperationsAddressChanged activepool_borrower_operations_address_changeds = 4;
+    repeated activepool_DefaultPoolAddressChanged activepool_default_pool_address_changeds = 5;
+    repeated activepool_EthBalanceUpdated activepool_eth_balance_updateds = 6;
+    repeated activepool_EtherSent activepool_ether_sents = 7;
+    repeated activepool_LusdBalanceUpdated activepool_lusd_balance_updateds = 8;
+    repeated activepool_OwnershipTransferred activepool_ownership_transferreds = 9;
+    repeated activepool_StabilityPoolAddressChanged activepool_stability_pool_address_changeds = 10;
+    repeated activepool_TroveManagerAddressChanged activepool_trove_manager_address_changeds = 11;
+}
+
+message activepool_ActivePoolAddressChanged {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_new_active_pool_address = 5;
+}
+
+message activepool_ActivePoolEthBalanceUpdated {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    string u_eth = 5;
+}
+
+message activepool_ActivePoolLusdDebtUpdated {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    string u_lusd_debt = 5;
+}
+
+message activepool_BorrowerOperationsAddressChanged {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_new_borrower_operations_address = 5;
+}
+
+message activepool_DefaultPoolAddressChanged {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_new_default_pool_address = 5;
+}
+
+message activepool_EthBalanceUpdated {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    string u_new_balance = 5;
+}
+
+message activepool_EtherSent {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_to = 5;
+    string u_amount = 6;
+}
+
+message activepool_LusdBalanceUpdated {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    string u_new_balance = 5;
+}
+
+message activepool_OwnershipTransferred {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes previous_owner = 5;
+    bytes new_owner = 6;
+}
+
+message activepool_StabilityPoolAddressChanged {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_new_stability_pool_address = 5;
+}
+
+message activepool_TroveManagerAddressChanged {
+    string evt_tx_hash = 1;
+    uint32 evt_index = 2;
+    google.protobuf.Timestamp evt_block_time = 3;
+    uint64 evt_block_number = 4;
+    bytes u_new_trove_manager_address = 5;
+}
