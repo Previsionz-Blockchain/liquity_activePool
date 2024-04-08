@@ -259,110 +259,9 @@ fn eth_sent_store(events: contract::Events, o: StoreAddBigInt) {
             format!("Update"),
             BigInt::from_str(&update.u_amount).unwrap(),
         );
-        // o.add(
-        //     0,
-        //     format!("Account:{}", Hex(&draw.user).to_string()),
-        //     BigInt::from_str(&draw.payout).unwrap(),
-        // );
-        // o.add(
-        //     0,
-        //     format!(
-        //         "AccountDraw:{}:{}",
-        //         Hex(&draw.user).to_string(),
-        //         &draw.draw_id
-        //     ),
-        //     BigInt::from_str(&draw.payout).unwrap(),
-        // );
-        // o.add(
-        //     0,
-        //     format!("Aggregate"),
-        //     BigInt::from_str(&draw.payout).unwrap(),
-        // );
     }
 }
 
-// fn db_activepool_out(events: &contract::Events, tables: &mut DatabaseChangeTables) {
-//     // Loop over all the abis events to create table changes
-//     events.activepool_active_pool_address_changeds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_active_pool_address_changed", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_active_pool_address", Hex(&evt.u_new_active_pool_address).to_string());
-//     });
-//     events.activepool_active_pool_eth_balance_updateds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_active_pool_eth_balance_updated", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_eth", BigDecimal::from_str(&evt.u_eth).unwrap());
-//     });
-//     events.activepool_active_pool_lusd_debt_updateds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_active_pool_lusd_debt_updated", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_lusd_debt", BigDecimal::from_str(&evt.u_lusd_debt).unwrap());
-//     });
-//     events.activepool_borrower_operations_address_changeds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_borrower_operations_address_changed", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_borrower_operations_address", Hex(&evt.u_new_borrower_operations_address).to_string());
-//     });
-//     events.activepool_default_pool_address_changeds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_default_pool_address_changed", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_default_pool_address", Hex(&evt.u_new_default_pool_address).to_string());
-//     });
-//     events.activepool_eth_balance_updateds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_eth_balance_updated", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_balance", BigDecimal::from_str(&evt.u_new_balance).unwrap());
-//     });
-//     events.activepool_ether_sents.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_ether_sent", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_amount", BigDecimal::from_str(&evt.u_amount).unwrap())
-//             .set("u_to", Hex(&evt.u_to).to_string());
-//     });
-//     events.activepool_lusd_balance_updateds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_lusd_balance_updated", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_balance", BigDecimal::from_str(&evt.u_new_balance).unwrap());
-//     });
-//     events.activepool_ownership_transferreds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_ownership_transferred", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("new_owner", Hex(&evt.new_owner).to_string())
-//             .set("previous_owner", Hex(&evt.previous_owner).to_string());
-//     });
-//     events.activepool_stability_pool_address_changeds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_stability_pool_address_changed", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_stability_pool_address", Hex(&evt.u_new_stability_pool_address).to_string());
-//     });
-//     events.activepool_trove_manager_address_changeds.iter().for_each(|evt| {
-//         tables
-//             .create_row("activepool_trove_manager_address_changed", [("evt_tx_hash", evt.evt_tx_hash.to_string()),("evt_index", evt.evt_index.to_string())])
-//             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-//             .set("evt_block_number", evt.evt_block_number)
-//             .set("u_new_trove_manager_address", Hex(&evt.u_new_trove_manager_address).to_string());
-//     });
-// }
 
 
 fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTables, clock: Clock, eth_sent_store: StoreGetBigInt) {
@@ -380,16 +279,6 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
             .set("LUSDDebt", &bigdecimal0);
     }
     
-    // events.activepool_active_pool_address_changeds.iter().for_each(|evt| {
-    //     tables
-    //         .create_row("activepool_active_pool_address_changed", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-    //         .set("evt_tx_hash", &evt.evt_tx_hash)
-    //         .set("evt_index", evt.evt_index)
-    //         .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-    //         .set("evt_block_number", evt.evt_block_number)
-    //         .set("u_new_active_pool_address", Hex(&evt.u_new_active_pool_address).to_string());
-
-    // });
     events.activepool_active_pool_eth_balance_updateds.iter().for_each(|evt| {
         tables
             .create_row("activepool_active_pool_eth_balance_updated", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
@@ -442,15 +331,7 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
             .update_row("activePool", format!("pool"))
             .set("defaultPoolAddress", Hex(&evt.u_new_default_pool_address).to_string());
     });
-    // events.activepool_eth_balance_updateds.iter().for_each(|evt| {
-    //     tables
-    //         .create_row("activepool_eth_balance_updated", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-    //         .set("evt_tx_hash", &evt.evt_tx_hash)
-    //         .set("evt_index", evt.evt_index)
-    //         .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-    //         .set("evt_block_number", evt.evt_block_number)
-    //         .set("u_new_balance", BigDecimal::from_str(&evt.u_new_balance).unwrap());
-    // });
+    
     events.activepool_ether_sents.iter().for_each(|evt| {
         tables
             .create_row("activepool_ether_sent", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
@@ -467,15 +348,6 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
                 .set("totalEthSent", to_big_decimal(total.to_string().as_str(), 18).unwrap());
         }
     });
-    // events.activepool_lusd_balance_updateds.iter().for_each(|evt| {
-    //     tables
-    //         .create_row("activepool_lusd_balance_updated", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-    //         .set("evt_tx_hash", &evt.evt_tx_hash)
-    //         .set("evt_index", evt.evt_index)
-    //         .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-    //         .set("evt_block_number", evt.evt_block_number)
-    //         .set("u_new_balance", BigDecimal::from_str(&evt.u_new_balance).unwrap());
-    // });
     events.activepool_ownership_transferreds.iter().for_each(|evt| {
         tables
             .create_row("activepool_ownership_transferred", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
@@ -520,14 +392,6 @@ fn map_events(blk: eth::Block) -> Result<contract::Events, substreams::errors::E
     map_activepool_events(&blk, &mut events);
     Ok(events)
 }
-
-// #[substreams::handlers::map]
-// fn db_out(events: contract::Events) -> Result<DatabaseChanges, substreams::errors::Error> {
-//     // Initialize Database Changes container
-//     let mut tables = DatabaseChangeTables::new();
-//     db_activepool_out(&events, &mut tables);
-//     Ok(tables.to_database_changes())
-// }
 
 #[substreams::handlers::map]
 fn graph_out(events: contract::Events, clock: Clock, eth_sent_store: StoreGetBigInt) -> Result<EntityChanges, substreams::errors::Error> {
