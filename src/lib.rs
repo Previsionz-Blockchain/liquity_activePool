@@ -10,15 +10,20 @@ use substreams_entity_change::pb::entity::EntityChanges;
 use substreams_entity_change::tables::Tables as EntityChangesTables;
 use substreams_ethereum::pb::eth::v2 as eth;
 use substreams_ethereum::Event;
-use substreams::store::{StoreAdd, StoreAddBigInt, StoreGet, StoreGetBigInt, StoreNew};
+use substreams::store::{StoreAdd, StoreAddBigInt, StoreGet, StoreGetBigInt, StoreNew, StoreGetProto};
 
 use util::to_big_decimal;
 
 #[allow(unused_imports)]
 use num_traits::cast::ToPrimitive;
 use std::str::FromStr;
+//use std::str::String;
 use substreams::scalar::BigDecimal;
 use substreams::scalar::BigInt;
+
+use crate::{
+    pb::{uniswap_pricing::v1::Erc20Price},
+};
 
 use substreams::pb::substreams::{Clock};
 
@@ -251,6 +256,30 @@ fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events) {
         .collect());
 }
 
+// pub struct Token {
+//     pub address: ::prost::alloc::string::String,
+//     #[prost(string, tag="3")]
+//     pub name: ::prost::alloc::string::String,
+//     #[prost(string, tag="4")]
+//     pub symbol: ::prost::alloc::string::String,
+//     #[prost(uint64, tag="5")]
+// }
+
+// #[substreams::handlers::map]
+fn deposit_and_price(uniswap_prices: StoreGetProto<Erc20Price>) ->Option<BigDecimal> {
+    uniswap_prices
+        .get_last(StoreKey::uniswap_price_by_token_address_key("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"))
+        .and_then(|price| BigDecimal::from_str(&price.price_usd).ok())
+}
+
+fn get_name() -> String {
+    let name = abi::activepool_contract::functions::Name {};
+    let name_options = name.call(ACTIVEPOOL_TRACKED_CONTRACT.to_vec());
+    let x = name_options.unwrap();
+    substreams::log::info!("Contract name is: {}", x.to_string());
+    x
+}
+
 #[substreams::handlers::store]
 fn eth_sent_store(events: contract::Events, o: StoreAddBigInt) {
     for update in events.activepool_ether_sents.into_iter() {
@@ -266,11 +295,13 @@ fn eth_sent_store(events: contract::Events, o: StoreAddBigInt) {
 
 fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTables, clock: Clock, eth_sent_store: StoreGetBigInt) {
     // Loop over all the abis events to create table changes
+    let contract_name = get_name();
 
     let bigdecimal0 = BigDecimal::zero();
+
     if clock.number == 12178562 {
         tables
-            .create_row("activePool", format!("pool"))
+            .create_row("Pool", format!("{}", contract_name))
             .set("troveManagerAddress", "")
             .set("borrowerOperationsAddress", "")
             .set("stabilityPoolAddress", "")
@@ -281,107 +312,56 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
     
     events.activepool_active_pool_eth_balance_updateds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_active_pool_eth_balance_updated", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_eth", BigDecimal::from_str(&evt.u_eth).unwrap());
-
-        tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("ETH", BigDecimal::from_str(&evt.u_eth).unwrap());
     });
     events.activepool_active_pool_lusd_debt_updateds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_active_pool_lusd_debt_updated", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_lusd_debt", BigDecimal::from_str(&evt.u_lusd_debt).unwrap());
-
-        tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("LUSDDebt", BigDecimal::from_str(&evt.u_lusd_debt).unwrap());
     });
     events.activepool_borrower_operations_address_changeds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_borrower_operations_address_changed", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_new_borrower_operations_address", Hex(&evt.u_new_borrower_operations_address).to_string());
-
-            tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("borrowerOperationsAddress", Hex(&evt.u_new_borrower_operations_address).to_string());
     });
     events.activepool_default_pool_address_changeds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_default_pool_address_changed", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_new_default_pool_address", Hex(&evt.u_new_default_pool_address).to_string());
-
-        tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("defaultPoolAddress", Hex(&evt.u_new_default_pool_address).to_string());
     });
     
     events.activepool_ether_sents.iter().for_each(|evt| {
         tables
-            .create_row("activepool_ether_sent", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
+            .create_row("ETHsent", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
             .set("evt_tx_hash", &evt.evt_tx_hash)
             .set("evt_index", evt.evt_index)
             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
             .set("evt_block_number", evt.evt_block_number)
             .set("u_amount", BigDecimal::from_str(&evt.u_amount).unwrap())
-            .set("u_to", Hex(&evt.u_to).to_string());
+            .set("u_to", Hex(&evt.u_to).to_string())
+            .set("contract", &contract_name);
         
         if let Some(total) = eth_sent_store.get_last(format!("Update")) {
             tables
-                .update_row("activePool", format!("pool"))
+                .update_row("Pool", format!("{}", contract_name))
                 .set("totalEthSent", to_big_decimal(total.to_string().as_str(), 18).unwrap());
         }
     });
     events.activepool_ownership_transferreds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_ownership_transferred", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("new_owner", Hex(&evt.new_owner).to_string())
-            .set("previous_owner", Hex(&evt.previous_owner).to_string());
+            .update_row("Pool", format!("{}", contract_name))
+            .set("currentOwner", Hex(&evt.new_owner).to_string())
+            .set("previousOwner", Hex(&evt.previous_owner).to_string());
     });
     events.activepool_stability_pool_address_changeds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_stability_pool_address_changed", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_new_stability_pool_address", Hex(&evt.u_new_stability_pool_address).to_string());
-        
-        tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("stabilityPoolAddress", Hex(&evt.u_new_stability_pool_address).to_string());
     });
     events.activepool_trove_manager_address_changeds.iter().for_each(|evt| {
         tables
-            .create_row("activepool_trove_manager_address_changed", format!("{}-{}", evt.evt_tx_hash, evt.evt_index))
-            .set("evt_tx_hash", &evt.evt_tx_hash)
-            .set("evt_index", evt.evt_index)
-            .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
-            .set("evt_block_number", evt.evt_block_number)
-            .set("u_new_trove_manager_address", Hex(&evt.u_new_trove_manager_address).to_string());
-
-        tables
-            .update_row("activePool", format!("pool"))
+            .update_row("Pool", format!("{}", contract_name))
             .set("troveManagerAddress", Hex(&evt.u_new_trove_manager_address).to_string());
     });
 }

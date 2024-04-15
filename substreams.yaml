@@ -8,6 +8,7 @@ imports:
   graph: https://github.com/streamingfast/substreams-sink-subgraph/releases/download/v0.1.0/substreams-sink-subgraph-protodefs-v0.1.0.spkg
   database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v1.2.1/substreams-database-change-v1.2.1.spkg
   entity: https://github.com/streamingfast/substreams-entity-change/releases/download/v1.1.0/substreams-entity-change-v1.1.0.spkg
+  uniswap_prices: https://github.com/Graph-BuildersDAO/uniswap-pricing-substream/releases/download/v0.1.3/uniswap-pricing-v0.1.3.spkg
 
 protobuf:
   files:
@@ -36,6 +37,15 @@ modules:
     valueType: bigint
     inputs:
       - map: map_events
+
+  - name: deposit_and_price
+    kind: map
+    initialBlock: 12178562
+    inputs:
+      - map: map_events
+      - store: uniswap_prices:store_weth_prices
+    output:
+      type: bigdecimal
 
   # - name: db_out
   #   kind: map
