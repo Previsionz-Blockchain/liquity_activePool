@@ -65,7 +65,6 @@ modules:
       - map: map_events
       - source: sf.substreams.v1.Clock
       - store: eth_sent_store
-      - store: uniswap_prices:store_uniswap_prices
     output:
       type: proto:sf.substreams.entity.v1.EntityChanges
 
