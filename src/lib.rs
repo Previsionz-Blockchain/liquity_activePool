@@ -371,7 +371,7 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
             .set("evt_block_number", evt.evt_block_number)
             .set("u_amount", BigDecimal::from_str(&evt.u_amount).unwrap())
             .set("u_to", Hex(&evt.u_to).to_string())
-            // .set("usd_value", BigDecimal::from_str(&evt.usd_value).unwrap())
+            .set("usd_value", BigDecimal::from_str(&evt.usd_value).unwrap())
             .set("contract", &contract_name);
         
         if let Some(total) = eth_sent_store.get_last(format!("Update")) {
