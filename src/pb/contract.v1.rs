@@ -124,6 +124,8 @@ pub struct ActivepoolEtherSent {
     pub u_to: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag="6")]
     pub u_amount: ::prost::alloc::string::String,
+    #[prost(string, tag="7")]
+    pub usd_value: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -182,5 +184,19 @@ pub struct ActivepoolTroveManagerAddressChanged {
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
     pub u_new_trove_manager_address: ::prost::alloc::vec::Vec<u8>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EtherSent {
+    #[prost(message, repeated, tag="1")]
+    pub sents: ::prost::alloc::vec::Vec<ActivepoolEtherSentUsd>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ActivepoolEtherSentUsd {
+    #[prost(string, tag="1")]
+    pub u_amount: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub usd_value: ::prost::alloc::string::String,
 }
 // @@protoc_insertion_point(module)

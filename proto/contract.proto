@@ -73,6 +73,7 @@ message activepool_EtherSent {
     uint64 evt_block_number = 4;
     bytes u_to = 5;
     string u_amount = 6;
+    string usd_value = 7;
 }
 
 message activepool_LusdBalanceUpdated {
@@ -106,4 +107,13 @@ message activepool_TroveManagerAddressChanged {
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
     bytes u_new_trove_manager_address = 5;
+}
+
+message EtherSent {
+    repeated activepool_EtherSent_USD sents = 1;
+}
+
+message activepool_EtherSent_USD {
+    string u_amount = 1;
+    string usd_value = 2;
 }

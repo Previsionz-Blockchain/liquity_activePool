@@ -6,6 +6,7 @@ type ETHsent @entity {
     evt_block_number: BigInt!
     u_amount: BigDecimal!
     u_to: String!
+    usd_value: BigDecimal
     contract: Pool!
 }
 type Pool @entity {

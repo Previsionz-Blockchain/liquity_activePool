@@ -10,13 +10,14 @@ use substreams_entity_change::pb::entity::EntityChanges;
 use substreams_entity_change::tables::Tables as EntityChangesTables;
 use substreams_ethereum::pb::eth::v2 as eth;
 use substreams_ethereum::Event;
-use substreams::store::{StoreAdd, StoreAddBigInt, StoreGet, StoreGetBigInt, StoreNew, StoreGetProto};
+use substreams::store::{StoreAdd, StoreAddBigInt, StoreGet, StoreGetBigInt, StoreNew, StoreGetProto, StoreGetBigDecimal};
 
 use util::to_big_decimal;
 
 #[allow(unused_imports)]
 use num_traits::cast::ToPrimitive;
 use std::str::FromStr;
+use std::ops::Mul;
 //use std::str::String;
 use substreams::scalar::BigDecimal;
 use substreams::scalar::BigInt;
@@ -31,7 +32,10 @@ substreams_ethereum::init!();
 
 const ACTIVEPOOL_TRACKED_CONTRACT: [u8; 20] = hex!("df9eb223bafbe5c5271415c75aecd68c21fe3d7f");
 
-fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events) {
+fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events, chainlink_prices: StoreGetBigDecimal) {
+
+    let eth_price = get_eth_price(chainlink_prices);
+
     events.activepool_active_pool_address_changeds.append(&mut blk
         .receipts()
         .flat_map(|view| {
@@ -159,6 +163,7 @@ fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events) {
                 .filter(|log| log.address == ACTIVEPOOL_TRACKED_CONTRACT)
                 .filter_map(|log| {
                     if let Some(event) = abi::activepool_contract::events::EtherSent::match_and_decode(log) {
+                        let convert_amount = BigInt::from_str(&event.u_amount.to_string()).unwrap_or(BigInt::from(0)).to_decimal(BigInt::from(18).to_u64());
                         return Some(contract::ActivepoolEtherSent {
                             evt_tx_hash: Hex(&view.transaction.hash).to_string(),
                             evt_index: log.block_index,
@@ -166,6 +171,7 @@ fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events) {
                             evt_block_number: blk.number,
                             u_amount: event.u_amount.to_string(),
                             u_to: event.u_to,
+                            usd_value: eth_price.clone().mul(convert_amount).to_string()
                         });
                     }
 
@@ -256,21 +262,45 @@ fn map_activepool_events(blk: &eth::Block, events: &mut contract::Events) {
         .collect());
 }
 
-// pub struct Token {
-//     pub address: ::prost::alloc::string::String,
-//     #[prost(string, tag="3")]
-//     pub name: ::prost::alloc::string::String,
-//     #[prost(string, tag="4")]
-//     pub symbol: ::prost::alloc::string::String,
-//     #[prost(uint64, tag="5")]
+// #[substreams::handlers::map]
+// fn get_eth_price(events: contract::Events, chainlink_prices: StoreGetBigDecimal /*uniswap_prices: StoreGetProto<Erc20Price>*/) -> Result<contract::EtherSent, substreams::errors::Error> {
+//     // let price = uniswap_prices
+//     // .get_last("UsdPriceByTokenSymbol:ETH")
+//     // .map_or(Some(BigDecimal::from(0)), |price| BigDecimal::from_str(&price.price_usd).ok());
+
+//     let eth_price = chainlink_prices.get_last("price_by_symbol:ETH:USD").map_or(BigDecimal::from(0), |price| price);
+//     // let eth_price = uniswap_prices
+//     //     .get_last("UsdPriceByTokenSymbol:ETH")
+//     //     .map(|price| BigDecimal::from_str(&price.price_usd).ok())
+//     //     .unwrap_or_else(|| Some(BigDecimal::from(0)))
+//     //     .unwrap_or(BigDecimal::from(0));
+
+
+//     substreams::log::println(format!("{:?}", eth_price));
+
+//     let all_sents: Vec<contract::ActivepoolEtherSentUsd> = events.activepool_ether_sents
+//     .into_iter()
+//     .map(|original| {
+
+//         let convert_amount = BigInt::from_str(&original.u_amount).unwrap_or(BigInt::from(0)).to_decimal(BigInt::from(18).to_u64());
+
+//         contract::ActivepoolEtherSentUsd {
+//             u_amount: original.u_amount.to_string(),
+//             usd_value: eth_price.clone().mul(convert_amount).to_string()
+//         }
+//     })
+//     .collect();
+
+//     Ok(contract::EtherSent { sents: all_sents })
 // }
 
-// #[substreams::handlers::map]
-fn deposit_and_price(uniswap_prices: StoreGetProto<Erc20Price>) ->Option<BigDecimal> {
-    uniswap_prices
-        .get_last(StoreKey::uniswap_price_by_token_address_key("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"))
-        .and_then(|price| BigDecimal::from_str(&price.price_usd).ok())
+
+fn get_eth_price(chainlink_prices: StoreGetBigDecimal) -> BigDecimal{
+    let eth_price = chainlink_prices.get_last("price_by_symbol:ETH:USD").map_or(BigDecimal::from(0), |price| price);
+    substreams::log::println(format!("{:?}", eth_price));
+    eth_price
 }
+
 
 fn get_name() -> String {
     let name = abi::activepool_contract::functions::Name {};
@@ -296,6 +326,7 @@ fn eth_sent_store(events: contract::Events, o: StoreAddBigInt) {
 fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTables, clock: Clock, eth_sent_store: StoreGetBigInt) {
     // Loop over all the abis events to create table changes
     let contract_name = get_name();
+
 
     let bigdecimal0 = BigDecimal::zero();
 
@@ -340,6 +371,7 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
             .set("evt_block_number", evt.evt_block_number)
             .set("u_amount", BigDecimal::from_str(&evt.u_amount).unwrap())
             .set("u_to", Hex(&evt.u_to).to_string())
+            // .set("usd_value", BigDecimal::from_str(&evt.usd_value).unwrap())
             .set("contract", &contract_name);
         
         if let Some(total) = eth_sent_store.get_last(format!("Update")) {
@@ -367,9 +399,9 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
 }
 
 #[substreams::handlers::map]
-fn map_events(blk: eth::Block) -> Result<contract::Events, substreams::errors::Error> {
+fn map_events(blk: eth::Block, chainlink_prices: StoreGetBigDecimal) -> Result<contract::Events, substreams::errors::Error> {
     let mut events = contract::Events::default();
-    map_activepool_events(&blk, &mut events);
+    map_activepool_events(&blk, &mut events, chainlink_prices);
     Ok(events)
 }
 
