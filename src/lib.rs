@@ -369,7 +369,7 @@ fn graph_activepool_out(events: &contract::Events, tables: &mut EntityChangesTab
             .set("evt_index", evt.evt_index)
             .set("evt_block_time", evt.evt_block_time.as_ref().unwrap())
             .set("evt_block_number", evt.evt_block_number)
-            .set("u_amount", BigDecimal::from_str(&evt.u_amount).unwrap())
+            .set("u_amount", to_big_decimal(&evt.u_amount, 18).unwrap())
             .set("u_to", Hex(&evt.u_to).to_string())
             .set("usd_value", BigDecimal::from_str(&evt.usd_value).unwrap())
             .set("contract", &contract_name);
