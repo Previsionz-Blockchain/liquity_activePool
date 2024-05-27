@@ -29,6 +29,7 @@ modules:
     inputs:
       - source: sf.ethereum.type.v2.Block
       - store: chainlink_prices:chainlink_price_store
+      - source: sf.substreams.v1.Clock
     output:
       type: proto:contract.v1.Events
 
@@ -39,24 +40,6 @@ modules:
     valueType: bigint
     inputs:
       - map: map_events
-
-  # - name: get_eth_price
-  #   kind: map
-  #   initialBlock: 12178562
-  #   inputs:
-  #     - map: map_events
-  #     # - store: uniswap_prices:store_uniswap_prices
-  #     - store: chainlink_prices:chainlink_price_store
-  #   output:
-  #     type: proto:contract.v1.activepool_EtherSent_USD
-
-  # - name: db_out
-  #   kind: map
-  #   initialBlock: 12178562
-  #   inputs:
-  #     - map: map_events
-  #   output:
-  #     type: proto:sf.substreams.sink.database.v1.DatabaseChanges
 
   - name: graph_out
     kind: map

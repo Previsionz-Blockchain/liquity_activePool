@@ -4,6 +4,7 @@ import "google/protobuf/timestamp.proto";
 
 package contract.v1;
 
+
 message Events {
     repeated activepool_ActivePoolAddressChanged activepool_active_pool_address_changeds = 1;
     repeated activepool_ActivePoolEthBalanceUpdated activepool_active_pool_eth_balance_updateds = 2;
@@ -16,6 +17,7 @@ message Events {
     repeated activepool_OwnershipTransferred activepool_ownership_transferreds = 9;
     repeated activepool_StabilityPoolAddressChanged activepool_stability_pool_address_changeds = 10;
     repeated activepool_TroveManagerAddressChanged activepool_trove_manager_address_changeds = 11;
+    contract_Name contract_name = 12;
 }
 
 message activepool_ActivePoolAddressChanged {
@@ -23,7 +25,7 @@ message activepool_ActivePoolAddressChanged {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_new_active_pool_address = 5;
+    bytes new_active_pool_address = 5;
 }
 
 message activepool_ActivePoolEthBalanceUpdated {
@@ -31,7 +33,7 @@ message activepool_ActivePoolEthBalanceUpdated {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    string u_eth = 5;
+    string eth = 5;
 }
 
 message activepool_ActivePoolLusdDebtUpdated {
@@ -39,7 +41,7 @@ message activepool_ActivePoolLusdDebtUpdated {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    string u_lusd_debt = 5;
+    string lusd_debt = 5;
 }
 
 message activepool_BorrowerOperationsAddressChanged {
@@ -47,7 +49,7 @@ message activepool_BorrowerOperationsAddressChanged {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_new_borrower_operations_address = 5;
+    bytes new_borrower_operations_address = 5;
 }
 
 message activepool_DefaultPoolAddressChanged {
@@ -55,7 +57,7 @@ message activepool_DefaultPoolAddressChanged {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_new_default_pool_address = 5;
+    bytes new_default_pool_address = 5;
 }
 
 message activepool_EthBalanceUpdated {
@@ -63,7 +65,7 @@ message activepool_EthBalanceUpdated {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    string u_new_balance = 5;
+    string new_balance = 5;
 }
 
 message activepool_EtherSent {
@@ -71,8 +73,8 @@ message activepool_EtherSent {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_to = 5;
-    string u_amount = 6;
+    bytes to = 5;
+    string amount = 6;
     string usd_value = 7;
 }
 
@@ -81,7 +83,7 @@ message activepool_LusdBalanceUpdated {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    string u_new_balance = 5;
+    string new_balance = 5;
 }
 
 message activepool_OwnershipTransferred {
@@ -98,7 +100,7 @@ message activepool_StabilityPoolAddressChanged {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_new_stability_pool_address = 5;
+    bytes new_stability_pool_address = 5;
 }
 
 message activepool_TroveManagerAddressChanged {
@@ -106,14 +108,9 @@ message activepool_TroveManagerAddressChanged {
     uint32 evt_index = 2;
     google.protobuf.Timestamp evt_block_time = 3;
     uint64 evt_block_number = 4;
-    bytes u_new_trove_manager_address = 5;
+    bytes new_trove_manager_address = 5;
 }
 
-message EtherSent {
-    repeated activepool_EtherSent_USD sents = 1;
-}
-
-message activepool_EtherSent_USD {
-    string u_amount = 1;
-    string usd_value = 2;
+message contract_Name {
+    string name = 1;
 }

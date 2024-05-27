@@ -1,24 +1,25 @@
-type ETHsent @entity {
+type EthSent @entity {
     id: ID!
     evt_tx_hash: String!
     evt_index: BigInt!
     evt_block_time: String!
     evt_block_number: BigInt!
-    u_amount: BigDecimal!
-    u_to: String!
+    amount: BigDecimal!
+    to: String!
     usd_value: BigDecimal
-    contract: Pool!
+    pool: Pool!
 }
 type Pool @entity {
     id: ID!
-    troveManagerAddress: String!
-    borrowerOperationsAddress: String!
-    stabilityPoolAddress: String!
-    defaultPoolAddress: String!
-    ETH: BigDecimal!
-    LUSDDebt: BigDecimal!
-    totalEthSent: BigDecimal
-    currentOwner: String
-    previousOwner: String
-    ethSent: [ETHsent!]! @derivedFrom(field: "contract")
+    name: String!
+    trove_manager_address: String!
+    borrower_operations_address: String!
+    stability_pool_address: String!
+    default_pool_address: String!
+    eth: BigDecimal!
+    lusd_debt: BigDecimal!
+    total_eth_sent: BigDecimal
+    current_owner: String
+    previous_owner: String
+    eth_sent: [EthSent!]! @derivedFrom(field: "pool")
 }
