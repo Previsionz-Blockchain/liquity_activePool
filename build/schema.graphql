@@ -1,101 +1,25 @@
-type activepool_active_pool_address_changed @entity {
+type EthSent @entity {
     id: ID!
     evt_tx_hash: String!
     evt_index: BigInt!
     evt_block_time: String!
     evt_block_number: BigInt!
-    u_new_active_pool_address: String!
+    amount: BigDecimal!
+    to: String!
+    usd_value: BigDecimal
+    pool: Pool!
 }
-type activepool_active_pool_eth_balance_updated @entity {
+type Pool @entity {
     id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_eth: BigDecimal!
-}
-type activepool_active_pool_lusd_debt_updated @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_lusd_debt: BigDecimal!
-}
-type activepool_borrower_operations_address_changed @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_borrower_operations_address: String!
-}
-type activepool_default_pool_address_changed @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_default_pool_address: String!
-}
-type activepool_eth_balance_updated @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_balance: BigDecimal!
-}
-type activepool_ether_sent @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_amount: BigDecimal!
-    u_to: String!
-}
-type activepool_lusd_balance_updated @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_balance: BigDecimal!
-}
-type activepool_ownership_transferred @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    new_owner: String!
-    previous_owner: String!
-}
-type activepool_stability_pool_address_changed @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_stability_pool_address: String!
-}
-type activepool_trove_manager_address_changed @entity {
-    id: ID!
-    evt_tx_hash: String!
-    evt_index: BigInt!
-    evt_block_time: String!
-    evt_block_number: BigInt!
-    u_new_trove_manager_address: String!
-}
-
-type activePool @entity {
-    id: ID!
-    troveManagerAddress: String!
-    borrowerOperationsAddress: String!
-    stabilityPoolAddress: String!
-    defaultPoolAddress: String!
-    ETH: BigDecimal!
-    LUSDDebt: BigDecimal!
-    totalEthSent: BigDecimal
+    name: String!
+    trove_manager_address: String!
+    borrower_operations_address: String!
+    stability_pool_address: String!
+    default_pool_address: String!
+    eth: BigDecimal!
+    lusd_debt: BigDecimal!
+    total_eth_sent: BigDecimal
+    current_owner: String
+    previous_owner: String
+    eth_sent: [EthSent!]! @derivedFrom(field: "pool")
 }

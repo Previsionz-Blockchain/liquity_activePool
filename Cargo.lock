@@ -386,6 +386,7 @@ dependencies = [
  "bigdecimal",
  "ethabi",
  "getrandom",
+ "hex",
  "hex-literal",
  "num-bigint",
  "num-traits",

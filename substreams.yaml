@@ -8,6 +8,8 @@ imports:
   graph: https://github.com/streamingfast/substreams-sink-subgraph/releases/download/v0.1.0/substreams-sink-subgraph-protodefs-v0.1.0.spkg
   database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v1.2.1/substreams-database-change-v1.2.1.spkg
   entity: https://github.com/streamingfast/substreams-entity-change/releases/download/v1.1.0/substreams-entity-change-v1.1.0.spkg
+  uniswap_prices: https://github.com/Graph-BuildersDAO/uniswap-pricing-substream/releases/download/v0.1.3/uniswap-pricing-v0.1.3.spkg
+  chainlink_prices: https://github.com/Graph-BuildersDAO/substreams/releases/download/chainlink-prices-v1.0.2/chainlink-price-substream-v1.0.2.spkg
 
 protobuf:
   files:
@@ -26,6 +28,8 @@ modules:
     initialBlock: 12178562
     inputs:
       - source: sf.ethereum.type.v2.Block
+      - store: chainlink_prices:chainlink_price_store
+      - source: sf.substreams.v1.Clock
     output:
       type: proto:contract.v1.Events
 
@@ -36,14 +40,6 @@ modules:
     valueType: bigint
     inputs:
       - map: map_events
-
-  # - name: db_out
-  #   kind: map
-  #   initialBlock: 12178562
-  #   inputs:
-  #     - map: map_events
-  #   output:
-  #     type: proto:sf.substreams.sink.database.v1.DatabaseChanges
 
   - name: graph_out
     kind: map
@@ -56,3 +52,22 @@ modules:
       type: proto:sf.substreams.entity.v1.EntityChanges
 
 network: mainnet
+
+networks:
+  mainnet:
+    initialBlock:
+      chainlink_prices:store_confirmed_feeds: 12178562
+      chainlink_prices:get_chainlink_answers: 12178562
+      chainlink_prices:chainlink_price_store: 12178562
+      chainlink_prices:graph_out: 12178562
+      uniswap_prices:map_pair_created_events: 12178562
+      uniswap_prices:store_pair_created_events: 12178562
+      uniswap_prices:map_weth_prices: 12178562
+      uniswap_prices:store_weth_prices: 12178562
+      uniswap_prices:map_uniswap_prices: 12178562
+      uniswap_prices:store_uniswap_prices: 12178562
+      uniswap_prices:warmup: 12178562
+      uniswap_prices:chainlink_prices:chainlink_price_store: 12178562
+      uniswap_prices:chainlink_prices:graph_out: 12178562
+      uniswap_prices:chainlink_prices:get_chainlink_answers: 12178562
+      uniswap_prices:chainlink_prices:store_confirmed_feeds: 12178562

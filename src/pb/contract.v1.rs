@@ -24,6 +24,8 @@ pub struct Events {
     pub activepool_stability_pool_address_changeds: ::prost::alloc::vec::Vec<ActivepoolStabilityPoolAddressChanged>,
     #[prost(message, repeated, tag="11")]
     pub activepool_trove_manager_address_changeds: ::prost::alloc::vec::Vec<ActivepoolTroveManagerAddressChanged>,
+    #[prost(message, optional, tag="12")]
+    pub contract_name: ::core::option::Option<ContractName>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -37,7 +39,7 @@ pub struct ActivepoolActivePoolAddressChanged {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_new_active_pool_address: ::prost::alloc::vec::Vec<u8>,
+    pub new_active_pool_address: ::prost::alloc::vec::Vec<u8>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -51,7 +53,7 @@ pub struct ActivepoolActivePoolEthBalanceUpdated {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(string, tag="5")]
-    pub u_eth: ::prost::alloc::string::String,
+    pub eth: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -65,7 +67,7 @@ pub struct ActivepoolActivePoolLusdDebtUpdated {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(string, tag="5")]
-    pub u_lusd_debt: ::prost::alloc::string::String,
+    pub lusd_debt: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -79,7 +81,7 @@ pub struct ActivepoolBorrowerOperationsAddressChanged {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_new_borrower_operations_address: ::prost::alloc::vec::Vec<u8>,
+    pub new_borrower_operations_address: ::prost::alloc::vec::Vec<u8>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -93,7 +95,7 @@ pub struct ActivepoolDefaultPoolAddressChanged {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_new_default_pool_address: ::prost::alloc::vec::Vec<u8>,
+    pub new_default_pool_address: ::prost::alloc::vec::Vec<u8>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -107,7 +109,7 @@ pub struct ActivepoolEthBalanceUpdated {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(string, tag="5")]
-    pub u_new_balance: ::prost::alloc::string::String,
+    pub new_balance: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -121,9 +123,11 @@ pub struct ActivepoolEtherSent {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_to: ::prost::alloc::vec::Vec<u8>,
+    pub to: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag="6")]
-    pub u_amount: ::prost::alloc::string::String,
+    pub amount: ::prost::alloc::string::String,
+    #[prost(string, tag="7")]
+    pub usd_value: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -137,7 +141,7 @@ pub struct ActivepoolLusdBalanceUpdated {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(string, tag="5")]
-    pub u_new_balance: ::prost::alloc::string::String,
+    pub new_balance: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -167,7 +171,7 @@ pub struct ActivepoolStabilityPoolAddressChanged {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_new_stability_pool_address: ::prost::alloc::vec::Vec<u8>,
+    pub new_stability_pool_address: ::prost::alloc::vec::Vec<u8>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -181,6 +185,12 @@ pub struct ActivepoolTroveManagerAddressChanged {
     #[prost(uint64, tag="4")]
     pub evt_block_number: u64,
     #[prost(bytes="vec", tag="5")]
-    pub u_new_trove_manager_address: ::prost::alloc::vec::Vec<u8>,
+    pub new_trove_manager_address: ::prost::alloc::vec::Vec<u8>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContractName {
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
 }
 // @@protoc_insertion_point(module)
